@@ -22,37 +22,122 @@ class Bcolors:
 class Stats:
     happiness = 50
     mental_wellbeing = 50
-    wealth = '↑'  # ↑ → or ↓ to signify relative money movement
+    wealth = '→'  # ↑ → or ↓ to signify relative money movement
     stress = 0
     days_quarantined = 0
-    covid = False
+    fields = [50, 50, '→', 0, 0]
+    flags = [0, 0, 0, 0, 0]
+    stat_message = ['Happiness: ', '\tMental Health: ', '\tWealth: ', '\tStress: ', '\tDays Quarantined: ']
 
     def print_stats(self):
-        print(Bcolors.FAIL + 'Happiness: ' + str(self.happiness) + ' | Mental Health: ' + str(self.mental_wellbeing)
-              + Bcolors.ENDC)
+        for i in range(len(self.flags)):
+            if self.flags[i] == -1:
+                print(Bcolors.FAIL + self.stat_message[i] + str(self.fields[i]) + Bcolors.ENDC, end='')
+            elif self.flags[i] == 0:
+                print(Bcolors.CORE_ONE + self.stat_message[i] + str(self.fields[i]) + Bcolors.ENDC, end='')
+            else:  # 1 case
+                print(Bcolors.OKGREEN + self.stat_message[i] + str(self.fields[i]) + Bcolors.ENDC, end='')
+        print('\n')
+        # print(Bcolors.FAIL + 'Happiness: ' + str(self.happiness) + ' | Mental Health: ' + str(self.mental_wellbeing)
+        #       + Bcolors.ENDC)
+        self.flags = [0, 0, 0, 0, 0]
 
     def set_happiness(self, new):
-        self.happiness = new
+        if self.happiness + new < 0:
+            val = round(self.happiness / 2)
+        elif self.happiness + new > 100:
+            val = round(((100 - self.happiness)/2) + self.happiness)
+        else:
+            val = self.happiness + new
+        if val < self.happiness:
+            self.flags[0] = -1
+        elif val == self.happiness:
+            self.flags[0] = 0
+        else:
+            self.flags[0] = 1
+        self.happiness = val
+        self.fields[0] = val
 
     def set_mental(self, new):
-        self.mental_wellbeing = new
+        if self.mental_wellbeing + new < 0:
+            val = round(self.mental_wellbeing / 2)
+        elif self.mental_wellbeing + new > 100:
+            val = round(((100 - self.mental_wellbeing)/2) + self.mental_wellbeing)
+        else:
+            val = self.mental_wellbeing + new
+        if val < self.mental_wellbeing:
+            self.flags[1] = -1
+        elif val == self.mental_wellbeing:
+            self.flags[1] = 0
+        else:
+            self.flags[1] = 1
+        self.mental_wellbeing = val
+        self.fields[1] = val
 
     def set_wealth(self, new):
-        if new is 'up':
-            self.wealth = '↑'
-        elif new is 'down':
-            self.wealth = '↓'
+        if new == 'up':
+            val = '↑'
+        elif new == 'down':
+            val = '↓'
+        elif new == 'upup':
+            val = '↑↑'
+        elif new == 'downdown':
+            val = '↓↓'
         else:
-            self.wealth = '→'
+            val = '→'
+
+        if val < self.wealth:
+            self.flags[2] = -1
+        elif val == self.wealth:
+            self.flags[2] = 0
+        else:
+            self.flags[2] = 1
+
+        self.wealth = val
+        self.fields[2] = val
 
     def set_stress(self, new):
-        self.stress = new
+        if self.stress + new < 0:
+            val = round(self.stress / 2)
+        elif self.stress + new > 100:
+            val = round(((100 - self.stress)/2) + self.stress)
+        else:
+            val = self.stress + new
+
+        if val < self.stress:
+            self.flags[3] = 1
+        elif val == self.stress:
+            self.flags[3] = 0
+        else:
+            self.flags[3] = -1
+
+        self.stress = val
+        self.fields[3] = val
 
     def set_days_quarantined(self, new):
-        self.days_quarantined = new
+        if self.days_quarantined + new < 0:
+            val = round(self.days_quarantined / 2)
+        elif self.days_quarantined + new > 100:
+            val = round(((100 - self.days_quarantined)/2) + self.days_quarantined)
+        else:
+            val = self.days_quarantined + new
 
-    def set_covid(self, new):
-        self.covid = new
+        if val < self.days_quarantined:
+            self.flags[4] = 1
+        elif val == self.days_quarantined:
+            self.flags[4] = 0
+        else:
+            self.flags[4] = -1
+
+        self.stress = val
+        self.fields[4] = val
+
+    def set_all(self, lst):
+        self.set_happiness(lst[0])
+        self.set_mental(lst[1])
+        self.set_wealth(lst[2])
+        self.set_stress(lst[3])
+        self.set_days_quarantined(lst[4])
 
 
 # Creates the typing effect on the text, and allows to have different colors for the different speakers
@@ -74,6 +159,19 @@ def slow_type(speed, color, text):
 # All the saved parameters the user types in
 NAME = ''
 ONE_WORD = ''
+
+
+# Event list with all the scenarios and impact to stats
+events = {'School': [(' You sit down at a spotless, spacious desk and log on to a zoom call from your private room. '
+                    'Wifi is never an issue and you tons of screen real estate to work with.', [0, 0, 'even', -20, 5]),
+                     ('The wifi doesn’t reach your room, so you trudge out to the kitchen where your family is '
+                      'arguing about something. Sit down, log in and watch the lecture on your cracked laptop screen, trying to tune out the background noise.', [-20, -10, 'even', 25, 5])]}
+
+
+keys = list(events.keys())
+print(keys)
+random.shuffle(keys)
+print(keys)
 
 
 # Intro to the story, with a couple branching choices
@@ -133,10 +231,17 @@ def introduction():
         ONE_WORD = input()
 
 
-introduction()
+# introduction()
 # print(NAME)
+
 # stats = Stats()
 # stats.print_stats()
+# stats.set_happiness(25)
+# stats.print_stats()
+# print(stats.fields)
+
+
+
 # # INTRODUCTION
 #
 # x = input()
@@ -147,13 +252,11 @@ introduction()
 # events = {'Money': ['Lots of money', 'No money'], 'Money2': ['Lots of money', 'No money'],
 #           'Money3': ['Lots of money', 'No money']}
 # sequential_words = ['first', 'next', 'third', 'following', 'next', 'fifth']  # Add as many as needed here
-# keys = list(events.keys())
-# print(keys)
-# random.shuffle(keys)
-# print(keys)
 #
-# for i in range(len(keys)):
-#     if keys[i] is "Money":
-#         c = 0
-#     # r = random.randint(0, 1)
-#     # print(events.get(keys[i])[r])
+for i in range(len(keys)):
+    # if keys[i] is "Money":
+    #     c = 0
+    r = random.randint(0, len(events.get(keys[i])) - 1)
+    stats.set_all(events.get(keys[i])[r][1])
+    stats.print_stats()
+    # print(events.get(keys[i])[r])
