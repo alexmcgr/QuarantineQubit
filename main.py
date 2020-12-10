@@ -159,6 +159,8 @@ def slow_type(speed, color, text):
 # All the saved parameters the user types in
 NAME = ''
 ONE_WORD = ''
+ONE_SPEED = 200
+TWO_SPEED = 200
 
 
 # Event list with all the scenarios and impact to stats
@@ -168,6 +170,7 @@ events = {'School': [(' You sit down at a spotless, spacious desk and log on to 
                       'arguing about something. Sit down, log in and watch the lecture on your cracked laptop screen, trying to tune out the background noise.', [-20, -10, 'even', 25, 5])]}
 
 
+# Shuffles all the events so each run through the prompts is unique
 keys = list(events.keys())
 print(keys)
 random.shuffle(keys)
@@ -176,7 +179,7 @@ print(keys)
 
 # Intro to the story, with a couple branching choices
 def introduction():
-    slow_type(100, Bcolors.CORE_ONE,
+    slow_type(ONE_SPEED, Bcolors.CORE_ONE,
               "While I might not be one, I know a Quantum computer. Everyone says they’re so much cooler "
               "than I am, but I think it’s a bunch of BS. Sure, I only work with 0’s and 1’s and cannot change their "
               "state, but I’m old school! It just works, everyone uses me. Quantum comes along and has the "
@@ -185,32 +188,34 @@ def introduction():
               "likes Quantum more now. Well, I am here to tell you that they are uncertain about EVERYTHING. Quantum "
               "couldn’t even tell you if he was looking at a 0 or 1 right now.")
 
-    slow_type(85, Bcolors.CORE_TWO, "Excuse the First Core, he likes to go on a tangent sometimes. I’m the Second "
+    slow_type(TWO_SPEED, Bcolors.CORE_TWO, "Excuse the First Core, he likes to go on a tangent sometimes. I’m the "
+                                          "Second "
                                     "Core and I try and stay levelheaded. Quantum is certainly uncertain, but I think "
                                     "he’s a good guy. I just hope that everyone is able to understand why we all love him so much. He can do so much at once! I have bits and he has qubits, which can do exponentially more operations every second than my old bits. Before we go on, can I ask your name? Just go ahead and type right in the terminal window.")
     global NAME
     NAME = input()
-    slow_type(105, Bcolors.CORE_ONE, "Ok, I do not always go on a tangent. I am telling you Two, we’ve gotta defend "
+    slow_type(ONE_SPEED, Bcolors.CORE_ONE, "Ok, I do not always go on a tangent. I am telling you Two, we’ve gotta "
+                                         "defend "
                                      "ourselves here! Hi, " + NAME + ", by the way. Quantum is going to make us "
                                                                      "useless soon enough. Stupid qubits in "
                                                                      "superposition that can do things we can’t. "
                                                                      "Wait, let me ask you a question too. Uhmmm, "
                                                                      "what is your social security number? ")
-    slow_type(85, Bcolors.CORE_TWO, "One!!! We talked about this. No one wants to tell us that, okay? ")
-    slow_type(105, Bcolors.CORE_ONE, "Fine. I still can’t get over the fact that Quantum is not certain of anything, "
+    slow_type(TWO_SPEED, Bcolors.CORE_TWO, "One!!! We talked about this. No one wants to tell us that, okay? ")
+    slow_type(ONE_SPEED, Bcolors.CORE_ONE, "Fine. I still can’t get over the fact that Quantum is not certain of anything, "
                                      "ever. Wouldn’t that make you go crazy? Have you ever been as uncertain as "
                                      "Quantum? (Yes/No)")
     choice1 = input()
     if choice1.lower() == ('yes' or 'y'):
-        slow_type(105, Bcolors.CORE_ONE, "Oh that’s right, humanity is dealing with a pandemic right now. I’ve heard "
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, "Oh that’s right, humanity is dealing with a pandemic right now. I’ve heard "
                                          "that is a pretty big deal out there. You know, I got a virus once too, "
                                          "when someone tried downloading a movie. Just pay for Netflix like the rest "
                                          "of the schmucks out there and keep me fresh.")
     else:
-        slow_type(85, Bcolors.CORE_TWO, "One, stop messing with them. Obviously they’re going through a pandemic and "
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, "One, stop messing with them. Obviously they’re going through a pandemic and "
                                         "there might be lots of things that are on their nerves right now. ")
 
-    slow_type(85, Bcolors.CORE_TWO, "This year must have been so uncertain for all you humans. There is actually a "
+    slow_type(TWO_SPEED, Bcolors.CORE_TWO, "This year must have been so uncertain for all you humans. There is actually a "
                                     "simulation I have that we could run, it shows how some of the major events of "
                                     "the year may have impacted people. You’ll draw events randomly and I’ll choose "
                                     "one of a few related scenarios for you to ponder. It might not describe you or "
@@ -220,22 +225,22 @@ def introduction():
     choice2 = input()
     global ONE_WORD
     if choice2.lower() == ('yes' or 'y'):
-        slow_type(85, Bcolors.CORE_TWO, "Great! Let’s get started. To calibrate, you type one adjective that ends in "
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, "Great! Let’s get started. To calibrate, you type one adjective that ends in "
                                         "-ing that describes 2020 best for you.")
         ONE_WORD = input()
     else:
-        slow_type(85, Bcolors.CORE_TWO, "Nonsense, maybe if One started us off you’ll get into it. Let’s try it, "
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, "Nonsense, maybe if One started us off you’ll get into it. Let’s try it, "
                                         "just for a little bit.")
-        slow_type(85, Bcolors.CORE_TWO, "Okay, fine, I’ll start. Type an adjective ending in -ing to calibrate our "
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, "Okay, fine, I’ll start. Type an adjective ending in -ing to calibrate our "
                                         "system, and make sure the word describes 2020 for you.")
         ONE_WORD = input()
 
 
-# introduction()
-# print(NAME)
-
-# stats = Stats()
-# stats.print_stats()
+introduction()
+print(NAME)
+print(ONE_WORD)
+stats = Stats()
+stats.print_stats()
 # stats.set_happiness(25)
 # stats.print_stats()
 # print(stats.fields)
