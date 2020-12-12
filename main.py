@@ -1,8 +1,8 @@
 import random
-import itertools
-import threading
 import time
 import sys
+import itertools
+import threading
 
 
 # Collection of colors to use for the text
@@ -38,8 +38,6 @@ class Stats:
             else:  # 1 case
                 print(Bcolors.OKGREEN + self.stat_message[i] + str(self.fields[i]) + Bcolors.ENDC, end='')
         print('\n')
-        # print(Bcolors.FAIL + 'Happiness: ' + str(self.happiness) + ' | Mental Health: ' + str(self.mental_wellbeing)
-        #       + Bcolors.ENDC)
         self.flags = [0, 0, 0, 0, 0]
 
     def set_happiness(self, new):
@@ -115,22 +113,18 @@ class Stats:
         self.fields[3] = val
 
     def set_days_quarantined(self, new):
-        if self.days_quarantined + new < 0:
-            val = round(self.days_quarantined / 2)
-        elif self.days_quarantined + new > 100:
-            val = round(((100 - self.days_quarantined) / 2) + self.days_quarantined)
+        if new == 0:
+            self.reset_days_quarantined()
         else:
             val = self.days_quarantined + new
-
-        if val < self.days_quarantined:
             self.flags[4] = 1
-        elif val == self.days_quarantined:
-            self.flags[4] = 0
-        else:
-            self.flags[4] = -1
+            self.days_quarantined = val
+            self.fields[4] = val
 
-        self.stress = val
-        self.fields[4] = val
+    def reset_days_quarantined(self):
+        self.flags[4] = -1
+        self.fields[4] = 0
+        self.days_quarantined = 0
 
     def set_all(self, lst):
         self.set_happiness(lst[0])
@@ -161,35 +155,144 @@ NAME = ''
 ONE_WORD = ''
 ONE_SPEED = 200
 TWO_SPEED = 200
+PROMPT_SPEED = 200
+done = False
 
+# List is [happiness, mental health, wealth, stress, days quarantined]
 # Event list with all the scenarios and impact to stats
 events = {'School': [(' You sit down at a spotless, spacious desk and log on to a zoom call from your private room. '
                       'Wifi is never an issue and you tons of screen real estate to work with.',
                       [0, 0, 'even', -20, 5]),
                      ('The wifi doesn’t reach your room, so you trudge out to the kitchen where your family is '
-                      'arguing about something. Sit down, log in and watch the lecture on your cracked laptop screen, trying to tune out the background noise.',
+                      'arguing about something. Sit down, log in and watch the lecture on your cracked laptop screen, '
+                      'trying to tune out the background noise.',
                       [-20, -10, 'even', 25, 5])],
+
           'Jobs': [(
               'You’ve applied to 150 job postings since May, '
               'and only four have called back. One realized they had '
               'the wrong candidate, two never called back after the '
               'initial phone screen, and one said they would refer you '
               'to another position (Which they never did).',
-              [-20, -20, 'downdown', 20, 10]), 'The job market in your '
-                                               'field is luckily still '
-                                               'booming, and you were '
-                                               'able to find a job '
-                                               'after you were furloughed early on. You feel guilty to mention it to '
-                                               'any of your friends that are still out of work. ',
-              [20, 20, 'upup', -20, 5]]}
+              [-20, -20, 'downdown', 20, 10]), 'The job market in your field is luckily still booming, and you were '
+                                               'able to find a job after you were laid off early on. You feel guilty '
+                                               'to mention it to any of your friends that are still out of work.',
+              [20, 20, 'upup', -20, 5]],
+
+          'Black Lives Matter': [('You finally feel like your voice matters when you participate in peaceful '
+                                  'protests of the unjust killings of George Floyd, Breonna Taylor, and others.',
+                                  [15, 0, 'even', 0, 0])],
+
+          'Sports': [('Your favorite sports team has a bout of COVID — you complain that they aren’t playing, '
+                      'forgetting that they are real people too. ', []),
+                     (
+                     'The city you’re living in makes the national news for a super-spreader event demanding high school '
+                     'football is reinstated.',
+                     [])],
+
+          'Consumerism': [('You help speed up Jeff Bezo\'s world domination plan with all the useless stuff you buy '
+                           'to fill the void of traveling and eating out.',
+                           []),
+                          (
+                          'You tighten your wallet and make sure your spending doesn’t go overboard on anything.', [])],
+
+          'Politics': [('You see a post on social media that one of your friends was at a political rally that later '
+                        'was linked to 24 cases of COVID. You were with them yesterday. Time to get tested, '
+                        'I guess.', []),
+                       (
+                       'In what feels like the first good event of the year, Joe Biden wins the presidency and promises to '
+                       'enact tougher COVID guidelines when he becomes president.', [])],
+
+          'Vaccine': [('You are selected to receive the vaccine very early on, in mid January! Even though everything '
+                       'won’t be all back to normal right away, the risk to you has lowered tremendously.', []),
+                      (
+                      'It is projected that you won’t be selected to receive the vaccine until at least June of next year. '
+                      'Mask up.', [])],
+
+          'Social Life': [('Early on you and your friends made plans to zoom often. It has fallen off lately, '
+                           'and now it seems like you might never see them again.', []),
+                          ('You and your friend group have been able to stay very close during the pandemic without '
+                           'actually seeing them, you zoom all the time and are constantly texting. You’ve organized a '
+                           'Secret Santa for the group, even with the uncertainty around the year.', [])],
+
+          'Zoom': [('After the 20th hour of zoom in the last week, you feel that you have hit your limit and cannot '
+                    'stare into screens all day anymore. There is nothing that can really be done, you are stuck '
+                    'until things get better. This year has just been' + ONE_WORD + '.', []),
+                   ('You stretch and stand every hour, and even though zoom is exhausting, you are getting through '
+                    'it. Even though this year has been just' + ONE_WORD + 'you are showing your resiliance.', [])],
+
+          'Quarantine': [
+              ('You break quarantine to hang out with some friends visiting that you haven’t seen in a long time.', []),
+              ('You start having your groceries delivered and are always masked up. You haven’t seen a friend '
+               'in person for what feels like ages.', [])],
+
+          'Routine': [('It feels like every day is a rogue-like, groundhog day, clusterfuck of nothing. Wake up, '
+                       'log onto your computer, eat, sleep, repeat. Somehow your routine is still wildly inconsistent '
+                       'day-to-day.', []),
+                      ('You\'ve finally settled into a routine, the only issue being that it involves going to bed '
+                       'past 2 AM. ', [])],
+
+          'Random thoughts': [('Goats have a horizontal pupil, keeping their vision parallel with the ground at all '
+                               'times.', [0, 0, 'even', 0, 1]),
+                              ('Grover Cleveland was the only President to serve two non-consecutive terms, '
+                               'making him both the 22nd and 24th President of the United States.', [0, 0, 'even',
+                                                                                                        0, 1]),
+                              ('The programming language Javascript was created in roughly a week, and is the basis '
+                               'of the world wide web we know today.', [0, 0, 'even', 0, 1]),
+                              ('Ocean Breeze Cranberry Juice sure has gotten some great free advertising during the '
+                               'pandemic.', [0, 0, 'even', 0, 1])],
+          }
+
+# Random transitions, some of the different sections will have transitions right after. There will be more
+# transitions here than needed so that they can be different through runs ('text', 'character')
+random_transitions = [('Honestly, that could have been way worse, right? ', 'one'),
+                      ('Hah, Quantum could never do that!', 'one'),
+                      ('It seems we have accidentally randomized everything, maybe Quantum is better than us.', 'two'),
+                      (), ]
+
+
+# Purposeful transitions, the index here matters as the sentence will be deliberately placed in the narrative
+purposeful_transitions = []  # TODO
+
+binary_strings = [
+    '00000000','00000001','00000010','00000011','00000100','00000101','00000110','00000111','00001000','00001001',
+    '00001010','00001011','00001100','00001101','00001110','00001111','00010000','00010001','00010010','00010011',
+    '00010100','00010101','00010110','00010111','00011000','00011001','00011010','00011011','00011100','00011101',
+    '00011110','00011111','00100000','00100001','00100010','00100011','00100100','00100101','00100110','00100111',
+    '00101000','00101001','00101010','00101011','00101100','00101101','00101110','00101111','00110000','00110001',
+    '00110010','00110011','00110100','00110101','00110110','00110111','00111000','00111001','00111010','00111011',
+    '00111100','00111101','00111110','00111111','01000000','01000001','01000010','01000011','01000100','01000101',
+    '01000110','01000111','01001000','01001001','01001010','01001011','01001100','01001101','01001110','01001111',
+    '01010000','01010001','01010010','01010011','01010100','01010101','01010110','01010111','01011000','01011001',
+    '01011010','01011011','01011100','01011101','01011110','01011111','01100000','01100001','01100010','01100011',
+    '01100100','01100101','01100110','01100111','01101000','01101001','01101010','01101011','01101100','01101101',
+    '01101110','01101111','01110000','01110001','01110010','01110011','01110100','01110101','01110110','01110111',
+    '01111000','01111001','01111010','01111011','01111100','01111101','01111110','01111111','10000000','10000001',
+    '10000010','10000011','10000100','10000101','10000110','10000111','10001000','10001001','10001010','10001011',
+    '10001100','10001101','10001110','10001111','10010000','10010001','10010010','10010011','10010100','10010101',
+    '10010110','10010111','10011000','10011001','10011010','10011011','10011100','10011101','10011110','10011111',
+    '10100000','10100001','10100010','10100011','10100100','10100101','10100110','10100111','10101000','10101001',
+    '10101010','10101011','10101100','10101101','10101110','10101111','10110000','10110001','10110010','10110011',
+    '10110100','10110101','10110110','10110111','10111000','10111001','10111010','10111011','10111100','10111101',
+    '10111110','10111111','11000000','11000001','11000010','11000011','11000100','11000101','11000110','11000111',
+    '11001000','11001001','11001010','11001011','11001100','11001101','11001110','11001111','11010000','11010001',
+    '11010010','11010011','11010100','11010101','11010110','11010111','11011000','11011001','11011010','11011011',
+    '11011100','11011101','11011110','11011111','11100000','11100001','11100010','11100011','11100100','11100101',
+    '11100110','11100111','11101000','11101001','11101010','11101011','11101100','11101101','11101110','11101111',
+    '11110000','11110001','11110010','11110011','11110100','11110101','11110110','11110111','11111000','11111001',
+    '11111010','11111011','11111100','11111101','11111110','11111111']
 
 # Shuffles the order of events so each run through the prompts is unique
 keys = list(events.keys())
 random.shuffle(keys)
-sequential_words = ['first', 'next', 'third', 'following', 'next', 'fifth']  # Add as many as needed here
-
+random.shuffle(random_transitions)
+random.shuffle(binary_strings)
+sequential_words = ['first', 'next', 'third', 'following', 'next',
+                    'fifth']  # TODO Add as many as event categories there are
 
 # Intro to the story, with a couple branching choices
+
+
 def introduction():
     slow_type(ONE_SPEED, Bcolors.CORE_ONE,
               "While I might not be one, I know a Quantum computer. Everyone says they’re so much cooler "
@@ -202,8 +305,14 @@ def introduction():
 
     slow_type(TWO_SPEED, Bcolors.CORE_TWO, "Excuse the First Core, he likes to go on a tangent sometimes. I’m the "
                                            "Second "
-                                           "Core and I try and stay levelheaded. Quantum is certainly uncertain, but I think "
-                                           "he’s a good guy. I just hope that everyone is able to understand why we all love him so much. He can do so much at once! I have bits and he has qubits, which can do exponentially more operations every second than my old bits. Before we go on, can I ask your name? Just go ahead and type right in the terminal window and hit enter when you are done.")
+                                           "Core and I try and stay levelheaded. Quantum is certainly uncertain, "
+                                           "but I think "
+                                           "he’s a good guy. I just hope that everyone is able to understand why we "
+                                           "all love him so much. "
+                                           "He can do so much at once! I have bits and he has qubits, which can do "
+                                           "exponentially more operations every second than my old bits. Before we "
+                                           "go on, can I ask your name? Just go ahead and type right in the terminal "
+                                           "window and hit enter when you are done.")
     global NAME
     NAME = input()
     slow_type(ONE_SPEED, Bcolors.CORE_ONE, "Ok, I do not always go on a tangent. I am telling you Two, we’ve gotta "
@@ -211,8 +320,8 @@ def introduction():
                                            "ourselves here! Hi, " + NAME + ", by the way. Quantum is going to make us "
                                                                            "useless soon enough. Stupid qubits in "
                                                                            "superposition that can do things we can’t. "
-                                                                           "Wait, let me ask you a question too. Uhmmm, "
-                                                                           "what is your social security number? ")
+                                                                           "Wait, let me ask you a question too. Uhmmm,"
+                                                                           " what is your social security number? ")
     slow_type(TWO_SPEED, Bcolors.CORE_TWO, "One!!! We talked about this. No one wants to tell us that, okay? ")
     slow_type(ONE_SPEED, Bcolors.CORE_ONE,
               "Fine. I still can’t get over the fact that Quantum is not certain of anything, "
@@ -255,14 +364,61 @@ def introduction():
         ONE_WORD = input()
 
 
-introduction()
+# Used to animate the Binary encodings
+def animate():
+    for c in itertools.cycle(binary_strings):
+        if done:
+            break
+        sys.stdout.write('\r' + c)
+        sys.stdout.flush()
+        time.sleep(0.1)
+    sys.stdout.write('\rDone!     ')
+
+
+# Helper function to animate
+def animate_binary(seconds):
+    t = threading.Thread(target=animate)
+    t.start()
+    time.sleep(seconds)
+    global done
+    done = True
+
+
+# introduction()
 stats = Stats()
+# animate_binary(10)
 
 for i in range(len(keys)):
-    # if keys[i] is "Money":
-    #     c = 0
-    print('The ' + sequential_words[i] + ' Event is ' + keys[i] + '.')
+    slow_type(PROMPT_SPEED, Bcolors.OKGREEN, 'The ' + sequential_words[i] + ' event is ' + keys[i] + '.')
     r = random.randint(0, len(events.get(keys[i])) - 1)
-    stats.set_all(events.get(keys[i])[r][1])
+    # stats.set_all(events.get(keys[i])[r][1])
+    if r == 0:
+        slow_type(TWO_SPEED, Bcolors.CORE_ONE, binary_strings[i] + ': ' + events.get(keys[i])[r][0])
+    else:
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, binary_strings[i] + ': ' + events.get(keys[i])[r][0])
+    # There will be many different cases for the examples that require user input
+    # Unfortunately needs to be somewhat hardcoded TODO
+    # if keys[i] == 'Jobs':
+    #     if r == 0:
+    #
+    # elif keys[i] == 'Sports':
+    #     if r == 0:
+    #
+    # elif keys[i] == 'Vaccine':
+    #     if r == 0:
+    print(keys[i])
+    if keys[i] == 'Social Life':
+        if r == 1 or 0:
+            slow_type(ONE_SPEED, Bcolors.CORE_TWO,
+                      'Do you buy a book for your secret santa or a board game? (Book/Game)')
+            jobs_choice = input()
+            if jobs_choice.lower() == 'book':
+                slow_type(ONE_SPEED, Bcolors.CORE_TWO,
+                          'Good choice. They love to read, and they need to keep their mind off of their elderly '
+                          'grandmother who was recently exposed to COVID.')
+            else:
+                slow_type(ONE_SPEED, Bcolors.CORE_TWO,
+                          'They\'ll love playing this when the pandemic is over with everyone, good choice. ')
+
     stats.print_stats()
-    print(events.get(keys[i])[r])
+    time.sleep(2)
