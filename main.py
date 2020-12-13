@@ -16,6 +16,7 @@ class Bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    WHITE = ''
 
 
 # Class storing all of the stats that are printed out after each event
@@ -27,7 +28,7 @@ class Stats:
     days_quarantined = 0
     fields = [50, 50, '→', 0, 0]
     flags = [0, 0, 0, 0, 0]
-    stat_message = ['Happiness: ', '\tMental Health: ', '\tWealth: ', '\tStress: ', '\tDays Quarantined: ']
+    stat_message = ['Happiness: ', '     Mental Health: ', '     Wealth: ', '     Stress: ', '     Days Quarantined: ']
 
     def print_stats(self):
         for i in range(len(self.flags)):
@@ -85,11 +86,11 @@ class Stats:
             val = '→'
 
         if val < self.wealth:
-            self.flags[2] = -1
+            self.flags[2] = 1
         elif val == self.wealth:
             self.flags[2] = 0
         else:
-            self.flags[2] = 1
+            self.flags[2] = -1
 
         self.wealth = val
         self.fields[2] = val
@@ -136,7 +137,7 @@ class Stats:
 
 # Creates the typing effect on the text, and allows to have different colors for the different speakers
 def slow_type(speed, color, text):
-    print(color)
+    print(color, end='')
     count = 0
     for l in text:
         if count is 100:
@@ -147,7 +148,7 @@ def slow_type(speed, color, text):
         sys.stdout.flush()
         time.sleep(random.random() * 7.0 / speed)
         count += 1
-    print('' + Bcolors.ENDC)
+    print('\n' + Bcolors.ENDC)
 
 
 # All the saved parameters the user types in
@@ -174,85 +175,92 @@ events = {'School': [(' You sit down at a spotless, spacious desk and log on to 
               'the wrong candidate, two never called back after the '
               'initial phone screen, and one said they would refer you '
               'to another position (Which they never did).',
-              [-20, -20, 'downdown', 20, 10]), 'The job market in your field is luckily still booming, and you were '
+              [-20, -20, 'downdown', 20, 10]), ('The job market in your field is luckily still booming, and you were '
                                                'able to find a job after you were laid off early on. You feel guilty '
                                                'to mention it to any of your friends that are still out of work.',
-              [20, 20, 'upup', -20, 5]],
+              [20, 20, 'upup', -20, 5])],
 
           'Black Lives Matter': [('You finally feel like your voice matters when you participate in peaceful '
                                   'protests of the unjust killings of George Floyd, Breonna Taylor, and others.',
                                   [15, 0, 'even', 0, 0])],
 
           'Sports': [('Your favorite sports team has a bout of COVID — you complain that they aren’t playing, '
-                      'forgetting that they are real people too. ', []),
+                      'forgetting that they are real people too. ', [-10, 0, 'even', 5, 5]),
                      (
                      'The city you’re living in makes the national news for a super-spreader event demanding high school '
                      'football is reinstated.',
-                     [])],
+                     [-5, 0, 'even', 5, 0])],
 
           'Consumerism': [('You help speed up Jeff Bezo\'s world domination plan with all the useless stuff you buy '
                            'to fill the void of traveling and eating out.',
-                           []),
+                           [10, -5, 'down', -5, 5]),
                           (
-                          'You tighten your wallet and make sure your spending doesn’t go overboard on anything.', [])],
+                          'You tighten your wallet and make sure your spending doesn’t go overboard on anything. '
+                          'Going to have to skip the latest video game you\'ve been wanting to play.',
+                          [-10, 0, 'up', 5, 5])],
 
           'Politics': [('You see a post on social media that one of your friends was at a political rally that later '
                         'was linked to 24 cases of COVID. You were with them yesterday. Time to get tested, '
-                        'I guess.', []),
+                        'I guess.', [-10, -10, 'even', 15, 0]),
                        (
                        'In what feels like the first good event of the year, Joe Biden wins the presidency and promises to '
-                       'enact tougher COVID guidelines when he becomes president.', [])],
+                       'enact tougher COVID guidelines when he becomes president.', [15, 15, 'even', -5, 10])],
 
           'Vaccine': [('You are selected to receive the vaccine very early on, in mid January! Even though everything '
-                       'won’t be all back to normal right away, the risk to you has lowered tremendously.', []),
+                       'won’t be all back to normal right away, the risk to you has lowered tremendously.', [10, 20,
+                                                                                                             'even',
+                                                                                                             -20, 5]),
                       (
                       'It is projected that you won’t be selected to receive the vaccine until at least June of next year. '
-                      'Mask up.', [])],
+                      'Mask up.', [-20, -10, 'even', 10, 20])],
 
           'Social Life': [('Early on you and your friends made plans to zoom often. It has fallen off lately, '
-                           'and now it seems like you might never see them again.', []),
+                           'and now it seems like you might never see them again.', [-15, -15, 'even', 5, 5]),
                           ('You and your friend group have been able to stay very close during the pandemic without '
                            'actually seeing them, you zoom all the time and are constantly texting. You’ve organized a '
-                           'Secret Santa for the group, even with the uncertainty around the year.', [])],
+                           'Secret Santa for the group, even with the uncertainty around the year.', [10, 15, 'even',
+                                                                                                      -10, 5
+                                                                                                      ])],
 
           'Zoom': [('After the 20th hour of zoom in the last week, you feel that you have hit your limit and cannot '
-                    'stare into screens all day anymore. There is nothing that can really be done, you are stuck '
-                    'until things get better. This year has just been' + ONE_WORD + '.', []),
+                    'stare into screens all day any longer. There is nothing that can really be done, you are stuck '
+                    'until things get better. This year has just been' + ONE_WORD + '.', [-15, -25, 'even', 15, 5]),
                    ('You stretch and stand every hour, and even though zoom is exhausting, you are getting through '
-                    'it. Even though this year has been just' + ONE_WORD + 'you are showing your resiliance.', [])],
+                    'it. Even though this year has been just' + ONE_WORD + 'you are showing your resiliance.', [0,
+                                                                                                                -5,
+                                                                                                                'even', 0, 5])],
 
           'Quarantine': [
-              ('You break quarantine to hang out with some friends visiting that you haven’t seen in a long time.', []),
+              ('You break quarantine to hang out with some friends visiting that you haven’t seen in a long time.',
+               [10, 10, 'even', 0, 0]),
               ('You start having your groceries delivered and are always masked up. You haven’t seen a friend '
-               'in person for what feels like ages.', [])],
+               'in person for what feels like ages.', [0, 0, 'even', 10, 10])],
 
           'Routine': [('It feels like every day is a rogue-like, groundhog day, clusterfuck of nothing. Wake up, '
                        'log onto your computer, eat, sleep, repeat. Somehow your routine is still wildly inconsistent '
-                       'day-to-day.', []),
+                       'day-to-day.', [-10, -10, 'even', 5, 5]),
                       ('You\'ve finally settled into a routine, the only issue being that it involves going to bed '
-                       'past 2 AM. ', [])],
+                       'past 2 AM. ', [0, -20, 'even', 5, 5])],
 
           'Random thoughts': [('Goats have a horizontal pupil, keeping their vision parallel with the ground at all '
-                               'times.', [0, 0, 'even', 0, 1]),
+                               'times.', [0, 0, 'even', 0, 5]),
                               ('Grover Cleveland was the only President to serve two non-consecutive terms, '
                                'making him both the 22nd and 24th President of the United States.', [0, 0, 'even',
-                                                                                                        0, 1]),
+                                                                                                        0, 5]),
                               ('The programming language Javascript was created in roughly a week, and is the basis '
-                               'of the world wide web we know today.', [0, 0, 'even', 0, 1]),
+                               'of the world wide web we know today.', [0, 0, 'even', 0, 5]),
                               ('Ocean Breeze Cranberry Juice sure has gotten some great free advertising during the '
-                               'pandemic.', [0, 0, 'even', 0, 1])],
+                               'pandemic.', [0, 0, 'even', 0, 5])],
           }
 
-# Random transitions, some of the different sections will have transitions right after. There will be more
-# transitions here than needed so that they can be different through runs ('text', 'character')
-random_transitions = [('Honestly, that could have been way worse, right? ', 'one'),
-                      ('Hah, Quantum could never do that!', 'one'),
-                      ('It seems we have accidentally randomized everything, maybe Quantum is better than us.', 'two'),
-                      (), ]
-
-
-# Purposeful transitions, the index here matters as the sentence will be deliberately placed in the narrative
-purposeful_transitions = []  # TODO
+# Transitions, some of the different sections will have transitions right after. There will be more
+# transitions here than needed so that they can be different through runs
+transitions = [
+    [('Honestly, that could have been way worse, right?', 1)],
+    [('Hah, Quantum could never do that!', 2), ('ithinkhecould', 1), ('What was that? You think he could do this? '
+                                                                      'Come on Two.', 1)],
+    [('Man, humans are having a really messed up year, good thing we don\'t have to worry about all this stuff!', 1)]
+]
 
 binary_strings = [
     '00000000','00000001','00000010','00000011','00000100','00000101','00000110','00000111','00001000','00001001',
@@ -282,13 +290,18 @@ binary_strings = [
     '11110000','11110001','11110010','11110011','11110100','11110101','11110110','11110111','11111000','11111001',
     '11111010','11111011','11111100','11111101','11111110','11111111']
 
+
 # Shuffles the order of events so each run through the prompts is unique
 keys = list(events.keys())
 random.shuffle(keys)
-random.shuffle(random_transitions)
+random.shuffle(transitions)
 random.shuffle(binary_strings)
-sequential_words = ['first', 'next', 'third', 'following', 'next',
-                    'fifth']  # TODO Add as many as event categories there are
+sequential_words = ['first', 'next', 'third', 'following',
+                    'fifth', 'next', 'seventh', 'following', 'ninth', 'tenth', 'penultimate', 'final']  # TODO Add as
+# many as
+# event
+# categories there
+# are
 
 # Intro to the story, with a couple branching choices
 
@@ -372,15 +385,15 @@ def animate():
         sys.stdout.write('\r' + c)
         sys.stdout.flush()
         time.sleep(0.1)
-    sys.stdout.write('\rDone!     ')
 
 
 # Helper function to animate
 def animate_binary(seconds):
+    global done
+    done = False
     t = threading.Thread(target=animate)
     t.start()
     time.sleep(seconds)
-    global done
     done = True
 
 
@@ -388,36 +401,72 @@ def animate_binary(seconds):
 stats = Stats()
 # animate_binary(10)
 
+
+# Initial transition test, TODO add more transitions and include this in the lower for loop
+for i in range(len(transitions)):
+    t = transitions[i]
+    for x in t:
+        if x[1] == 1:
+            slow_type(ONE_SPEED, Bcolors.CORE_ONE, x[0])
+        else:
+            slow_type(TWO_SPEED, Bcolors.CORE_TWO, x[0])
+
+
 for i in range(len(keys)):
     slow_type(PROMPT_SPEED, Bcolors.OKGREEN, 'The ' + sequential_words[i] + ' event is ' + keys[i] + '.')
     r = random.randint(0, len(events.get(keys[i])) - 1)
-    # stats.set_all(events.get(keys[i])[r][1])
-    if r == 0:
-        slow_type(TWO_SPEED, Bcolors.CORE_ONE, binary_strings[i] + ': ' + events.get(keys[i])[r][0])
+    stats.set_all(events.get(keys[i])[r][1])
+    x = ''
+    if i == 7:
+        animate_binary(.3)
+    elif i == 9:
+        animate_binary(.8)
+    elif i == 10:
+        animate_binary(1.2)
+    elif i == 11:
+        animate_binary(2)
     else:
-        slow_type(TWO_SPEED, Bcolors.CORE_TWO, binary_strings[i] + ': ' + events.get(keys[i])[r][0])
-    # There will be many different cases for the examples that require user input
-    # Unfortunately needs to be somewhat hardcoded TODO
-    # if keys[i] == 'Jobs':
-    #     if r == 0:
-    #
-    # elif keys[i] == 'Sports':
-    #     if r == 0:
-    #
-    # elif keys[i] == 'Vaccine':
-    #     if r == 0:
-    print(keys[i])
-    if keys[i] == 'Social Life':
-        if r == 1 or 0:
-            slow_type(ONE_SPEED, Bcolors.CORE_TWO,
-                      'Do you buy a book for your secret santa or a board game? (Book/Game)')
+        x = binary_strings[i]
+    slow_type(TWO_SPEED, Bcolors.WHITE, x + ': ' + events.get(keys[i])[r][0])
+    if keys[i] == 'Jobs':
+        if r == 0:
+            slow_type(ONE_SPEED, Bcolors.WHITE, 'Are you going to give up on the job search? (Yes/No)')
             jobs_choice = input()
-            if jobs_choice.lower() == 'book':
-                slow_type(ONE_SPEED, Bcolors.CORE_TWO,
+            if jobs_choice.lower() == ('yes' or 'y'):
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'It might not be certain that you will find a job, but what is certain is that you have already been through so much this year that this is just another hurdle to clear.')
+            else:
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'People are trying harder than ever, even with the uncertainty. Keep it going!')
+    elif keys[i] == 'Sports':
+        if r == 0:
+            slow_type(ONE_SPEED, Bcolors.WHITE, 'Does it make you mad that your fantasy football team lost because of this? (Yes/No)')
+            sports_choice = input()
+            if sports_choice.lower() == ('yes' or 'y'):
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'Ok. Better luck next year. ')
+            else:
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'Yeah, probably more important things to worry about, makes sense. ')
+
+    elif keys[i] == 'Vaccine':
+        if r == 0:
+            slow_type(ONE_SPEED, Bcolors.WHITE, 'Do you accept the vaccine or advocate to give it to someone who is '
+                                               'high risk that you are close with? (Keep/Give)')
+            vaccine_choice = input()
+            if vaccine_choice.lower() == 'keep':
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'Fair enough, you\'ve been through so much this year and you '
+                                                       'definitely deserve to get a vaccine too.')
+            else:
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'They are eternally grateful to you and you feel that you have truly made an impact. Plus, what\'s a little more waiting anyway?')
+
+    elif keys[i] == 'Social Life':
+        if r == 1:
+            slow_type(ONE_SPEED, Bcolors.WHITE,
+                      'Do you buy a book for your secret santa or a board game? (Book/Game)')
+            social_choice = input()
+            if social_choice.lower() == 'book':
+                slow_type(ONE_SPEED, Bcolors.WHITE,
                           'Good choice. They love to read, and they need to keep their mind off of their elderly '
                           'grandmother who was recently exposed to COVID.')
             else:
-                slow_type(ONE_SPEED, Bcolors.CORE_TWO,
+                slow_type(ONE_SPEED, Bcolors.WHITE,
                           'They\'ll love playing this when the pandemic is over with everyone, good choice. ')
 
     stats.print_stats()
