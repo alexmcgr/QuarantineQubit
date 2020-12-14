@@ -397,19 +397,19 @@ def animate_binary(seconds):
     done = True
 
 
-# introduction()
+introduction()
 stats = Stats()
 # animate_binary(10)
 
 
-# Initial transition test, TODO add more transitions and include this in the lower for loop
-for i in range(len(transitions)):
-    t = transitions[i]
-    for x in t:
-        if x[1] == 1:
-            slow_type(ONE_SPEED, Bcolors.CORE_ONE, x[0])
-        else:
-            slow_type(TWO_SPEED, Bcolors.CORE_TWO, x[0])
+# # Initial transition test, TODO add more transitions and include this in the lower for loop
+# for i in range(len(transitions)):
+#     t = transitions[i]
+#     for x in t:
+#         if x[1] == 1:
+#             slow_type(ONE_SPEED, Bcolors.CORE_ONE, x[0])
+#         else:
+#             slow_type(TWO_SPEED, Bcolors.CORE_TWO, x[0])
 
 
 for i in range(len(keys)):
