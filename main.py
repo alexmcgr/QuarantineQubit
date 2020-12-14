@@ -154,9 +154,9 @@ def slow_type(speed, color, text):
 # All the saved parameters the user types in
 NAME = ''
 ONE_WORD = ''
-ONE_SPEED = 200
-TWO_SPEED = 200
-PROMPT_SPEED = 200
+ONE_SPEED = 125
+TWO_SPEED = 95
+PROMPT_SPEED = 110
 done = False
 
 # List is [happiness, mental health, wealth, stress, days quarantined]
