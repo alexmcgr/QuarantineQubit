@@ -432,6 +432,15 @@ def ending():
     slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Don\'t forget what you\'ve gone through, but don\'t let it come to define you.')
 
 
+def ascii_title(event):
+    # if event == 'Jobs':
+    print('     ██╗ ██████╗ ██████╗ ███████╗')
+    print('     ██║██╔═══██╗██╔══██╗██╔════╝')
+    print('     ██║██║   ██║██████╔╝███████╗')
+    print('██   ██║██║   ██║██╔══██╗╚════██║')
+    print('╚█████╔╝╚██████╔╝██████╔╝███████║')
+    print(' ╚════╝  ╚═════╝ ╚═════╝ ╚══════╝')
+
 # Used to animate the Binary encodings
 def animate():
     for c in itertools.cycle(binary_strings):
@@ -458,7 +467,8 @@ stats = Stats()
 
 # Main loop of choices and events for the middle part of the project
 for i in range(len(keys)):
-    slow_type(PROMPT_SPEED, Bcolors.OKGREEN, 'The ' + sequential_words[i] + ' event is ' + keys[i] + '.')
+    slow_type(PROMPT_SPEED, Bcolors.OKGREEN, 'The ' + sequential_words[i] + ' event is: ')
+    ascii_title(keys[i])
     r = random.randint(0, len(events.get(keys[i])) - 1)
     stats.set_all(events.get(keys[i])[r][1])
     x = ''
