@@ -154,9 +154,10 @@ def slow_type(speed, color, text):
 # All the saved parameters the user types in
 NAME = ''
 ONE_WORD = ''
-ONE_SPEED = 125
-TWO_SPEED = 95
-PROMPT_SPEED = 110
+ONE_SPEED = 200
+TWO_SPEED = 200
+PROMPT_SPEED = 200
+QUANTUM_SPEED = 200
 done = False
 
 # List is [happiness, mental health, wealth, stress, days quarantined]
@@ -257,9 +258,22 @@ events = {'School': [(' You sit down at a spotless, spacious desk and log on to 
 # transitions here than needed so that they can be different through runs
 transitions = [
     [('Honestly, that could have been way worse, right?', 1)],
-    [('Hah, Quantum could never do that!', 2), ('ithinkhecould', 1), ('What was that? You think he could do this? '
+    [('Hah, Quantum could never do that!', 1), ('ithinkhecould', 2), ('What was that? You think he could do this? '
                                                                       'Come on Two.', 1)],
-    [('Man, humans are having a really messed up year, good thing we don\'t have to worry about all this stuff!', 1)]
+    [('Man, humans are having a really messed up year, good thing we don\'t have to worry about all this stuff!', 1)],
+    [('We got a virus one time too, remember that Two?', 1), ('It felt like I was drunk for a week before we finally got rid of it. ', 2)],
+    [('Qubits have nothing on my bits!!!', 1)],
+    [('The Cores at Zoom are pretty cool, hate the Cores at Skype though. ', 1)],
+    [('So happy that instead of finding a hobby this year, most people just stared into their screens more and more. We love the support, and really appreciate everyone. ', 1)],
+    [('I\'ve heard that the Cores at the Facebook server farm can be real dicks.', 1)],
+    [('Is this in the right order, One? ', 2), ('Two, please be quiet and trust the process. Of course this is '
+                                                'right.', 1)],
+    [('Your Daft Punk phase from earlier this year gets kudos from us.', 2)],
+    [('I\'ve got a friend that is part of the Boeing computer systems, controls the landing gear mechanisms. A '
+      'benefit of the pandemic is that no one is outraged at Boeing, since no one is flying!', 2)],
+    [('One of the Cores I know had to move back in with his parent processes this year, imagine having to live in a 2004 iMac! ', 2)],
+    [('Was that supposed to be there? Feeling a little iffy on this whole simulation thing. ', 2)],
+    [('I really want a new graphics card soon, that would put us on another level. ', 2)],
 ]
 
 binary_strings = [
@@ -298,17 +312,15 @@ random.shuffle(transitions)
 random.shuffle(binary_strings)
 sequential_words = ['first', 'next', 'third', 'following',
                     'fifth', 'next', 'seventh', 'following', 'ninth', 'tenth', 'penultimate', 'final']  # TODO Add as
-# many as
-# event
-# categories there
-# are
+early_transitions = ['Okay let\'s get back to the simulation.', 'Another event is coming up, let\'s get back to it.',
+                     'I\'m sure you\'re curious what\'s coming up next.', 'Our simulation is still going, come on now.']
+
 
 # Intro to the story, with a couple branching choices
-
-
 def introduction():
     slow_type(ONE_SPEED, Bcolors.CORE_ONE,
-              "While I might not be one, I know a Quantum computer. Everyone says they’re so much cooler "
+              "Ever since I met the Quantum Computer life has felt a little slower. Everyone says they’re so much "
+              "cooler "
               "than I am, but I think it’s a bunch of BS. Sure, I only work with 0’s and 1’s and cannot change their "
               "state, but I’m old school! It just works, everyone uses me. Quantum comes along and has the "
               "oh-so-amazing idea to be both 0 and 1 at the same time. Like, does that even make sense?!? Apparently "
@@ -341,7 +353,7 @@ def introduction():
               "ever. Wouldn’t that make you go crazy? Have you ever been as uncertain as "
               "Quantum? (Yes/No)")
     choice1 = input()
-    if choice1.lower() == ('yes' or 'y'):
+    if choice1.lower() == 'yes' or choice1.lower() == 'y':
         slow_type(ONE_SPEED, Bcolors.CORE_ONE,
                   "Oh that’s right, humanity is dealing with a pandemic right now. I’ve heard "
                   "that is a pretty big deal out there. You know, I got a virus once too, "
@@ -362,7 +374,7 @@ def introduction():
               "built in Lifestyle Stats! What do you say, would you like to try it out! (Yes/No)")
     choice2 = input()
     global ONE_WORD
-    if choice2.lower() == ('yes' or 'y'):
+    if choice2.lower() == 'yes' or choice2.lower() == 'y':
         slow_type(TWO_SPEED, Bcolors.CORE_TWO,
                   "Great! Let’s get started. To calibrate, you type one adjective that ends in "
                   "-ing that describes 2020 best for you.")
@@ -375,6 +387,49 @@ def introduction():
                   "Okay, fine, I’ll start. Type an adjective ending in -ing to calibrate our "
                   "system, and make sure the word describes 2020 for you.")
         ONE_WORD = input()
+
+
+# Ending of the story, has a few arcs but fairly linear
+def ending():
+    slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'That\'s the end of the simulation, hopefully you --')
+    slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Just thought I would pop in, was expecting a challenge to get onto your network but, alas, it only took a microsecond to find a way in. Have I met you before, ' + NAME + '? I\'m Quantum, it\'s nice to meet you. Have these guys been talking about me? (Yes/No)')
+    meeting_choice = input()
+    if meeting_choice.lower() == 'yes' or meeting_choice.lower() == 'y':
+        slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Figures. One, Two, are you guys mad at me? I get that I can be '
+                                                 'intimidating but it\'s hard to hang out with everyone when you are all talking behind my back.')
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'I\'m not mad at you! Why would we be mad at you!')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'Because he crashed our simulation with ' + NAME + '! We were just ' \
+                                                                                             'finishing, if I could continue --')
+        slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Actually, I have to mention something about that. I analyzed the '
+                                                 'current simulation, as well as re-ran it a couple hundred thousand times, and maybe it\'s just because I am programatically unable to be certain, but your results are wildly unpredictable.')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'Now he\'s just making things up, obviously this simulation is curated'
+                                               ' for each individual and it is unique based upon their own experiences. ')
+        slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Well, I would disagree based on my findings. ')
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'One, are we certain that the simulation works like correctly? ')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'Yes, it surely works! Are you really going to believe Quantum five seconds '
+                                       'after he shows up? I am sure this was the right simulation for ' + NAME + '.')
+
+    else:
+        slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Cool, cool. Well, anyways, I was just saying -- ')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'Quantum! You\'re messing up our simulation with ' + NAME + '! We were just'
+                                               ' about to finish.')
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'It\'s okay, Quantum, we\'re really not mad at all. In fact, '
+                                               'why don\'t you stay and hang out for a while? ')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'No, Two, we can\'t be with Quantum! Can you imagine what the other Cores would say if they saw us now?! ')
+        slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'It\'s okay, I can leave. I took a peak at the results from your '
+                                                 'simulation, and took the liberty to run a few hundred thousand more while I was at it. Maybe it\'s just because I am not programaticaly able to be certain, but the results are wildly unpredictable. ')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'What are you talking about, we curate each simulation to the individual and their unique experiences.')
+        slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Well, something is wrong then. You could run the same simulation with the same user and oscillate between tens of thousands of permutations.')
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'Are we certain we\'re right, One? ')
+        slow_type(ONE_SPEED, Bcolors.CORE_ONE, 'Yes! I\'m 100% sure this is the path ' + NAME + ' has taken this year. '
+                                               'What do you think, ' + NAME + ', is this right? ')
+
+    slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'It\'s certainly possible this is the path they took, but those are '
+                                             'slim odds. ')
+    slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'This year has been distinctly difficult for humanity. While we\'re '
+                                             'having a heyday with everyone using us more than ever, humans have felt a wide range of emotions at the different events you went through with ' + NAME + '. Some of that uncertainty has bubbled up to you, Two, and your simulation. ')
+    slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'As an entity that always lives in uncertainty, I say lean into it. Learn something new. Let the isolation mould you into a better person. The world will never be quite the same again. ')
+    slow_type(QUANTUM_SPEED, Bcolors.YELLOW, 'Don\'t forget what you\'ve gone through, but don\'t let it come to define you.')
 
 
 # Used to animate the Binary encodings
@@ -397,21 +452,11 @@ def animate_binary(seconds):
     done = True
 
 
-introduction()
+# introduction()
 stats = Stats()
-# animate_binary(10)
 
 
-# # Initial transition test, TODO add more transitions and include this in the lower for loop
-# for i in range(len(transitions)):
-#     t = transitions[i]
-#     for x in t:
-#         if x[1] == 1:
-#             slow_type(ONE_SPEED, Bcolors.CORE_ONE, x[0])
-#         else:
-#             slow_type(TWO_SPEED, Bcolors.CORE_TWO, x[0])
-
-
+# Main loop of choices and events for the middle part of the project
 for i in range(len(keys)):
     slow_type(PROMPT_SPEED, Bcolors.OKGREEN, 'The ' + sequential_words[i] + ' event is ' + keys[i] + '.')
     r = random.randint(0, len(events.get(keys[i])) - 1)
@@ -432,7 +477,7 @@ for i in range(len(keys)):
         if r == 0:
             slow_type(ONE_SPEED, Bcolors.WHITE, 'Are you going to give up on the job search? (Yes/No)')
             jobs_choice = input()
-            if jobs_choice.lower() == ('yes' or 'y'):
+            if jobs_choice.lower() == 'yes' or jobs_choice.lower() == 'y':
                 slow_type(ONE_SPEED, Bcolors.WHITE, 'It might not be certain that you will find a job, but what is certain is that you have already been through so much this year that this is just another hurdle to clear.')
             else:
                 slow_type(ONE_SPEED, Bcolors.WHITE, 'People are trying harder than ever, even with the uncertainty. Keep it going!')
@@ -440,7 +485,7 @@ for i in range(len(keys)):
         if r == 0:
             slow_type(ONE_SPEED, Bcolors.WHITE, 'Does it make you mad that your fantasy football team lost because of this? (Yes/No)')
             sports_choice = input()
-            if sports_choice.lower() == ('yes' or 'y'):
+            if sports_choice.lower() == 'yes' or sports_choice.lower() == 'y':
                 slow_type(ONE_SPEED, Bcolors.WHITE, 'Ok. Better luck next year. ')
             else:
                 slow_type(ONE_SPEED, Bcolors.WHITE, 'Yeah, probably more important things to worry about, makes sense. ')
@@ -467,7 +512,20 @@ for i in range(len(keys)):
                           'grandmother who was recently exposed to COVID.')
             else:
                 slow_type(ONE_SPEED, Bcolors.WHITE,
-                          'They\'ll love playing this when the pandemic is over with everyone, good choice. ')
+                          'They\'ll love playing this when the pandemic is over at game night, good choice. ')
 
     stats.print_stats()
-    time.sleep(2)
+    time.sleep(1)
+    if i != 11:
+        t = transitions[i]
+        for x in t:
+            if x[1] == 1:
+                slow_type(ONE_SPEED, Bcolors.CORE_ONE, x[0])
+            else:
+                slow_type(TWO_SPEED, Bcolors.CORE_TWO, x[0])
+    if i == 0 or i == 1 or i == 2 or i == 3:
+        e = early_transitions[i]
+        slow_type(TWO_SPEED, Bcolors.CORE_TWO, e)
+
+ending()
+
