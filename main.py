@@ -315,7 +315,13 @@ def introduction():
                     'it. Even though this year has been just ' + ONE_WORD + ' you are showing your resiliance.', [0,
                                                                                                                 -5,
                                                                                                                 'even', 0, 5])]})
-
+    slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'Here are your starting stats, they are on a 0-100 scale and I will '
+                                           'highlight them red if they have gotten worse and green if they have '
+                                           'gotten better. ')
+    stats2 = Stats()
+    stats2.print_stats()
+    time.sleep(4)
+    slow_type(TWO_SPEED, Bcolors.CORE_TWO, 'Alright, let\'s get started!')
 
 
 # Ending of the story, has a few arcs but fairly linear
@@ -393,12 +399,13 @@ events = {'School': [(' You sit down at a spotless, spacious desk and log on to 
                      'football is reinstated.',
                      [-5, 0, 'even', 5, 0])],
 
-          'Consumerism': [('You help speed up Jeff Bezo\'s world domination plan with all the useless stuff you buy '
+          'Consumerism': [('You help speed up Jeff Bezos\' world domination plan with all the useless stuff you buy '
                            'to fill the void of traveling and eating out.',
                            [10, -5, 'down', -5, 5]),
                           (
                           'You tighten your wallet and make sure your spending doesn’t go overboard on anything. '
-                          'Going to have to skip the latest video game you\'ve been wanting to play.',
+                          'Unfortunately, that means skipping the new video game you were looking forward to '
+                          'playing for months.',
                           [-10, 0, 'up', 5, 5])],
 
           'Politics': [('You see a post on social media that one of your friends was at a political rally that later '
@@ -701,6 +708,17 @@ for i in range(len(keys)):
                                                        'definitely deserve to get a vaccine too.')
             else:
                 slow_type(ONE_SPEED, Bcolors.WHITE, 'They are eternally grateful to you and you feel that you have truly made an impact. Plus, what\'s a little more waiting anyway?')
+        if r == 1:
+            slow_type(ONE_SPEED, Bcolors.WHITE, 'With this new information, do you stop social '
+                                                'distancing or continue waiting? (Stop/Wait)')
+            vaccine_choice = input()
+            if vaccine_choice.lower() == 'stop':
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'It is going to take a team effort to get through this, '
+                                                    'and quitting in the middle is not going to help. However, '
+                                                    'everyone totally understands the headspace and why it feels like waiting will never end. Be careful.')
+            else:
+                slow_type(ONE_SPEED, Bcolors.WHITE, 'It is really amazing seeing everyone sacrifice individually to '
+                                                    'help the people around them. Good job and stay strong! ')
 
     elif keys[i] == 'Social Life':
         if r == 1:
